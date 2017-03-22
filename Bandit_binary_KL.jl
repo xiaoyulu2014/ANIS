@@ -92,15 +92,16 @@ n = 100
 	Y = Y0*ones(n)
 	sigma = 0.001*ones(n)
 
-fig, axs = plt[:subplots](4,4, figsize=(15, 6)); suptitle("Every $(NN) iterations, Y0=$(Y0), boost= log(t)/n");
+fig, axs = plt[:subplots](4,4, figsize=(15, 6)); suptitle("Every $(NN) iterations, Y0=$(Y0), boost= sqrt(log(t)/n)");
 
 
-
+Nat = Array(Float64,num_iter,n)
 R = Float64[] #regret
 for i=1:num_iter
 	k = sample(1:n,WeightVec(q))
 	nn[k] += 1
-	boost ? sigma[k] = log(i+1)/nn[k] : sigma = zeros(n)
+	Nat[i,:] = nn
+	boost ? sigma[k] = sqrt(log(i+1)/nn[k]) : sigma = zeros(n)
 	w = rand(Bernoulli(0.01))*k[1]
 	Y[k] = (Y[k]*(nn[k]-1) + w)/nn[k] 
 	q = (Y+sigma)./sum(Y+sigma)	
@@ -125,3 +126,41 @@ axs[16][:plot](1:(num_iter-1),cumsum(R[2:end]),label="loss")
 axs[16][:set_xlabel]("iteration")
 title("KL loss")
 fig[:canvas][:draw]() 
+
+
+figure()
+
+plot((1/n):(1/n):1,n*q,label="proposal")
+plot(xx,yy/0.5,label="target")
+xlabel("x")
+legend(loc="upper left")
+
+#### see how Nat grows with t:
+figure();
+for i=1:5
+	ii = i
+	plot(Nat[:,ii],label = "arm $ii")
+end
+legend(loc="upper left")
+title("boost =  sqrt(log(t)/n)")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
