@@ -63,7 +63,7 @@ for i=1:10
 end
 
 
-R6 = mean(R_mat,2)
+R1 = mean(R_mat,2)
 
 plot(cumsum(R1),label="sqrt(t)/n")
 plot(cumsum(R2),label="sqrt(t/n)")
